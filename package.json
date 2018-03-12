@@ -13,6 +13,7 @@
     "url": "https://ragingwind.me"
   },
   "scripts": {
+    "build": "next build",
     "dev": "next"
   },
   "dependencies": {
