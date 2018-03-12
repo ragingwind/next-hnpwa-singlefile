@@ -1,7 +1,13 @@
 import Head from 'next/head'
 import Link from "next/link";
+import 'isomorphic-unfetch'
 
 export default class extends React.Component {
+	static async getInitialProps ({query, pathname}) {
+		const res = await fetch(`https://hnpwa.com/api/v0/${query.feed || 'news' }.json`)
+		return {feeds: await res.json()}
+	}
+
 	render () {
 		return (
 			<div>
@@ -19,6 +25,11 @@ export default class extends React.Component {
 						<Link href='/?feed=jobs'><a>Jobs</a></Link>
 					</nav>
 				</header>
+				<div>
+					<ul>
+						{this.props.feeds.map(f => <li key={f.id}>{f.title}</li>)}
+					</ul>
+				</div>
 			</div>
 		)
 	}
