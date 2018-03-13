@@ -11,7 +11,7 @@ export default class extends React.PureComponent {
 	componentDidMount () {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-        .register('/static/workbox/sw.js')
+        .register('/static/workbox/sw.js', {scope: '../../'})
         .then(registration => {
           console.log('service worker registration successful')
         })
