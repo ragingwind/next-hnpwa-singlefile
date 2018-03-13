@@ -13,7 +13,7 @@ export default class extends React.PureComponent {
 	componentDidMount () {
 		if ('serviceWorker' in navigator) {
 			navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
-				.then(reg => log('service worker registration succeed', reg))
+				.then(reg => log('service worker registration succeed', reg.scope))
 				.catch(err => log('service worker registration failed', err.message))
 		}
 	}
