@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Link from "next/link";
 import 'isomorphic-unfetch'
 
+const log = (...args) => console.log('%csw', 'background-color:black; color:white; padding: 2px 0.5em; border-radius: 0.5em;', ...args)
+
 export default class extends React.PureComponent {
 	static async getInitialProps ({query, pathname}) {
 		const res = await fetch(`https://hnpwa.com/api/v0/${query.feed || 'news' }.json`)
@@ -9,17 +11,12 @@ export default class extends React.PureComponent {
 	}
 
 	componentDidMount () {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/static/workbox/sw.js', {scope: '../../'})
-        .then(registration => {
-          console.log('service worker registration successful')
-        })
-        .catch(err => {
-          console.warn('service worker registration failed', err.message)
-        })
-    }
-  }
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
+				.then(reg => log('service worker registration succeed', reg))
+				.catch(err => log('service worker registration failed', err.message))
+		}
+	}
 
 	render () {
 		return (
