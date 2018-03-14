@@ -52,6 +52,13 @@ const styles = () => (
 			text-align: center;
 			margin-top: -10px;
 		}
+		.user {
+			padding: 10px;
+		}
+		.user div {
+			margin: 10px 0 5px 0;
+			padding-left: 15px;
+		}
 		@media (max-width: 600px) {
 			header {
 				justify-content: none;
@@ -63,36 +70,56 @@ const styles = () => (
 	`}</style>
 )
 
+const feed = ({id, points, url, title, user, comments_count}) => (
+	<li key={id}>
+		<span className="points">{points}</span>
+		<span>
+			<div><a href={url} target="_black">{title}</a></div>
+			<div>
+				<span>by <Link href={`/?user=${user}`}><a>{user}</a></Link></span>
+				<span> | <Link href={`/comments?id=${id}`}><a>{comments_count || 0}</a></Link></span>
+			</div>
+		</span>
+	</li>
+)
+
 const feeds = src => (
-	<ul>{
-		src.map(f =>
-		<li key={f.id}>
-			<span className="points">{f.points}</span>
-			<span>
-				<div><a href={f.url} target="_black">{f.title}</a></div>
-				<div>
-					<span>by <Link href={`/users?id=${f.user}`}><a>{f.user}</a></Link></span>
-					<span> | <Link href={`/comments?id=${f.id}`}><a>{f.comments_count || 0}</a></Link></span>
-				</div>
-			</span>
-		</li>)
-	}</ul>
+	<ul>{src.map(f => feed(f))}</ul>
+)
+
+const user = user => (
+	<div className="user">
+		<h1>{user.id}</h1>
+		<div>Created: {user.created}</div>
+		<div>Karma: {user.karma}</div>
+		<div>Delay: {user.delay}</div>
+		<div>About: {user.about}</div>
+	</div>
 )
 
 const nav = () => (
-	<nav>
-		<Link href='/'><a>News</a></Link>
-		<Link href='/?feed=newest'><a>Newest</a></Link>
-		<Link href='/?feed=ask'><a>Ask</a></Link>
-		<Link href='/?feed=show'><a>Show</a></Link>
-		<Link href='/?feed=jobs'><a>Jobs</a></Link>
-	</nav>
+	<header>
+		<nav>
+			<Link href='/'><a>News</a></Link>
+			<Link href='/?newest'><a>Newest</a></Link>
+			<Link href='/?ask'><a>Ask</a></Link>
+			<Link href='/?show'><a>Show</a></Link>
+			<Link href='/?jobs'><a>Jobs</a></Link>
+		</nav>
+	</header>
 )
 
-export default class extends React.PureComponent {
+export default class HNPWA extends React.PureComponent {
+	static routes (query) {
+		query = Object.entries(query)[0]
+		const subpath = (query ? `${query[0]}` : 'news')
+									+ (query && query[1] !== '' ? `/${query[1]}` : '')
+		return `https://hnpwa.com/api/v0/${subpath}.json`
+	}
+
 	static async getInitialProps ({query, pathname}) {
-		const res = await fetch(`https://hnpwa.com/api/v0/${query.feed || 'news' }.json`)
-		return {feeds: await res.json()}
+		const res = await fetch(HNPWA.routes(query))
+		return {data: await res.json()}
 	}
 
 	componentDidMount () {
@@ -104,6 +131,14 @@ export default class extends React.PureComponent {
 	}
 
 	render () {
+		const body = ({data, url}) => {
+			if (url.query['user']) {
+				return user(data)
+			} else {
+				return feeds(data)
+			}
+		}
+
 		return (
 			<div>
 				<Head>
@@ -111,12 +146,8 @@ export default class extends React.PureComponent {
 					<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 					<link rel="manifest" href="/static/manifest/manifest.json" />
 				</Head>
-				<header>
-					{nav()}
-				</header>
-				<div>
-					{feeds(this.props.feeds)}
-				</div>
+				{nav()}
+				{body(this.props)}
 				{styles()}
 			</div>
 		)
