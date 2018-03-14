@@ -85,8 +85,37 @@ const feed = ({id, points, url, title, user, comments_count}) => (
 	</li>
 )
 
-const feeds = src => (
-	<ul>{src.map(f => feed(f))}</ul>
+const more = query => {
+	const max = {
+		news: 10,
+		newest: 10,
+		ask: 2,
+		show: 2,
+		jobs: 1
+	}
+	
+	query = Object.entries(query)
+	query = query.length > 0 ? query[0][0].split('/') : ['news', 1]
+	
+	const feed = query[0]
+	const page = Number.parseInt(query[1])
+
+	return (
+		<div>
+			{page < max[feed] ? <Link href={`/?${feed}/${page + 1}`}><a>More...</a></Link> : ''}
+		</div>
+	)
+}
+
+const feeds = (src, url) => (
+	<div>
+		<div>
+			<ul>{src.map(f => feed(f))}</ul>
+		</div>
+		<div>
+			{more(url)}
+		</div>
+	</div>
 )
 
 const user = user => (
@@ -99,8 +128,8 @@ const user = user => (
 	</div>
 )
 
-const comment = ({content, user, time_ago}) => (
-	<div class="commment">
+const comment = ({id, content, user, time_ago}) => (
+	<div key={id} className="commment">
 		<div dangerouslySetInnerHTML={{__html: content}}></div>
 		<div>
 			<Link href={`/?user=${user}`}><a>{user}</a></Link> | {time_ago}
@@ -124,10 +153,10 @@ const nav = () => (
 	<header>
 		<nav>
 			<Link href='/'><a>News</a></Link>
-			<Link href='/?newest'><a>Newest</a></Link>
-			<Link href='/?ask'><a>Ask</a></Link>
-			<Link href='/?show'><a>Show</a></Link>
-			<Link href='/?jobs'><a>Jobs</a></Link>
+			<Link href='/?newest/1'><a>Newest</a></Link>
+			<Link href='/?ask/1'><a>Ask</a></Link>
+			<Link href='/?show/1'><a>Show</a></Link>
+			<Link href='/?jobs/1'><a>Jobs</a></Link>
 		</nav>
 	</header>
 )
@@ -135,9 +164,9 @@ const nav = () => (
 export default class HNPWA extends React.PureComponent {
 	static routes (query) {
 		query = Object.entries(query)[0]
-		const subpath = (query ? `${query[0]}` : 'news')
+		const subpath = (query ? `${query[0]}` : 'news/1')
 									+ (query && query[1] !== '' ? `/${query[1]}` : '')
-		return `https://hnpwa.com/api/v0/${subpath}.json`
+		return `https://api.hnpwa.com/v0/${subpath}.json`
 	}
 
 	static async getInitialProps ({query, pathname}) {
@@ -146,11 +175,11 @@ export default class HNPWA extends React.PureComponent {
 	}
 
 	componentDidMount () {
-		// if ('serviceWorker' in navigator) {
-		// 	navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
-		// 		.then(reg => log('service worker registration succeed', reg.scope))
-		// 		.catch(err => log('service worker registration failed', err.message))
-		// }
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
+				.then(reg => log('service worker registration succeed', reg.scope))
+				.catch(err => log('service worker registration failed', err.message))
+		}
 	}
 
 	render () {
@@ -160,7 +189,7 @@ export default class HNPWA extends React.PureComponent {
 			} else if (url.query['item']) {
 				return comments(data)
 			} else {
-				return feeds(data)
+				return feeds(data, url.query)
 			}
 		}
 
