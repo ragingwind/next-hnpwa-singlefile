@@ -4,6 +4,24 @@ import 'isomorphic-unfetch'
 
 const log = (...args) => console.log('%csw', 'background-color:black; color:white; padding: 2px 0.5em; border-radius: 0.5em;', ...args)
 
+const feeds = src => (
+	<div>
+		<ul>{
+			src.map(f =>
+			<li key={f.id}>
+				<span className="points">{f.points}</span>
+				<span>
+					<div><a href={f.url} target="_black">{f.title}</a></div>
+					<div>
+						<span>by <Link href={`/users?id=${f.user}`}><a>{f.user}</a></Link></span>
+						<span> | <Link href={`/comments?id=${f.id}`}><a>{f.comments_count || 0}</a></Link></span>
+					</div>
+				</span>
+			</li>)
+		}</ul>
+	</div>
+)
+
 export default class extends React.PureComponent {
 	static async getInitialProps ({query, pathname}) {
 		const res = await fetch(`https://hnpwa.com/api/v0/${query.feed || 'news' }.json`)
@@ -11,11 +29,11 @@ export default class extends React.PureComponent {
 	}
 
 	componentDidMount () {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
-				.then(reg => log('service worker registration succeed', reg.scope))
-				.catch(err => log('service worker registration failed', err.message))
-		}
+		// if ('serviceWorker' in navigator) {
+		// 	navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
+		// 		.then(reg => log('service worker registration succeed', reg.scope))
+		// 		.catch(err => log('service worker registration failed', err.message))
+		// }
 	}
 
 	render () {
@@ -36,10 +54,66 @@ export default class extends React.PureComponent {
 					</nav>
 				</header>
 				<div>
-					<ul>
-						{this.props.feeds.map(f => <li key={f.id}>{f.title}</li>)}
-					</ul>
+					{feeds(this.props.feeds)}
 				</div>
+				<style global jsx>{`
+					nav {
+						text-align: left;
+						background-color: black;
+						color: white;
+						padding: 12px;
+						position: fixed;
+						z-index: 1000;
+						top: 0;
+						left: 0;
+						right: 0;
+					};
+					header {
+						display: flex;
+						padding: 0;
+						margin: 0 0 30px 0;
+					};
+					header nav a {
+						padding: 6px 8px;
+						color: white;
+						text-decoration: none;
+						font-size: 16px;
+					}
+					a {
+						color: #0e0e0e;
+						text-decoration: none;
+					}
+					ul {
+						padding: 0;
+					}
+					li {
+						list-style-type: none;
+						position: relative;
+						padding: 20px 30px 20px 80px;
+						border-bottom: 1px solid #eee;
+						line-height: 20px;
+					}
+					.points {
+						font-size: 18px;
+						font-weight: 700;
+						position: absolute;
+						top: 50%;
+						left: 0;
+						width: 80px;
+						text-align: center;
+						margin-top: -10px;
+					}
+					@media (max-width: 600px) {
+						header {
+							justify-content: none;
+						}
+					}
+				`}</style>
+				<style global jsx>{`
+					body {
+						font-family: Helvetica,sans-serif;
+					}
+				`}</style>
 			</div>
 		)
 	}
