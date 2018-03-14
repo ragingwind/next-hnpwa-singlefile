@@ -52,12 +52,14 @@ const styles = () => (
 			text-align: center;
 			margin-top: -10px;
 		}
-		.user {
+		.container {
 			padding: 10px;
 		}
-		.user div {
+		.container div {
 			margin: 10px 0 5px 0;
-			padding-left: 15px;
+		}
+		.commment {
+			border-top: 1px solid grey;
 		}
 		@media (max-width: 600px) {
 			header {
@@ -76,8 +78,8 @@ const feed = ({id, points, url, title, user, comments_count}) => (
 		<span>
 			<div><a href={url} target="_black">{title}</a></div>
 			<div>
-				<span>by <Link href={`/?user=${user}`}><a>{user}</a></Link></span>
-				<span> | <Link href={`/comments?id=${id}`}><a>{comments_count || 0}</a></Link></span>
+				<span><Link href={`/?user=${user}`}><a>{user}</a></Link></span>
+				<span> | <Link href={`/?item=${id}`}><a>{comments_count || 0} comments</a></Link></span>
 			</div>
 		</span>
 	</li>
@@ -88,12 +90,33 @@ const feeds = src => (
 )
 
 const user = user => (
-	<div className="user">
+	<div className="container">
 		<h1>{user.id}</h1>
 		<div>Created: {user.created}</div>
 		<div>Karma: {user.karma}</div>
 		<div>Delay: {user.delay}</div>
 		<div>About: {user.about}</div>
+	</div>
+)
+
+const comment = ({content, user, time_ago}) => (
+	<div class="commment">
+		<div dangerouslySetInnerHTML={{__html: content}}></div>
+		<div>
+			<Link href={`/?user=${user}`}><a>{user}</a></Link> | {time_ago}
+		</div>
+	</div>
+)
+
+const comments = item => (
+	<div className="container">
+		<div>
+			<h2><a href={item.url} target="_black">{item.title}</a></h2>
+			<div>
+				<Link href={`/?user=${item.user}`}><a>{item.user}</a></Link> | {item.points} points
+			</div>
+		</div>
+		<div>{item.comments.map(c => comment(c))}</div>
 	</div>
 )
 
@@ -134,6 +157,8 @@ export default class HNPWA extends React.PureComponent {
 		const body = ({data, url}) => {
 			if (url.query['user']) {
 				return user(data)
+			} else if (url.query['item']) {
+				return comments(data)
 			} else {
 				return feeds(data)
 			}
