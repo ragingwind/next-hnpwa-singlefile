@@ -1,4 +1,4 @@
-# next-hnpwa
+# next-hnpwa-singlefile
 
 > HNPWA, Progressive Webapp, built with Next.js in single file.
 
