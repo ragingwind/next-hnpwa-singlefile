@@ -242,7 +242,7 @@ class HNPWApp extends React.PureComponent {
 		return (
 			<div>
 				<Head>
-					<title>NEXT-HNPWA</title>
+					<title>NextHNPWA</title>
 					<meta
 						name="viewport"
 						content="initial-scale=1.0, width=device-width"
