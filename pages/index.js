@@ -1,10 +1,16 @@
-import Head from 'next/head'
-import Link from "next/link";
-import 'isomorphic-unfetch'
+import Head from 'next/head';
+import Link from 'next/link';
+import { withRouter } from 'next/router';
+import 'isomorphic-unfetch';
 
-const log = (...args) => console.log('%csw', 'background-color:black; color:white; padding: 2px 0.5em; border-radius: 0.5em;', ...args)
+const log = (...args) =>
+	console.log(
+		'%csw',
+		'background-color:black; color:white; padding: 2px 0.5em; border-radius: 0.5em;',
+		...args
+	);
 
-const styles = () => (
+const Styles = () => (
 	<style global jsx>{`
 		nav {
 			text-align: left;
@@ -16,12 +22,12 @@ const styles = () => (
 			top: 0;
 			left: 0;
 			right: 0;
-		};
+		}
 		header {
 			display: flex;
 			padding: 0;
 			margin: 0 0 30px 0;
-		};
+		}
 		header nav a {
 			padding: 6px 8px;
 			color: white;
@@ -67,58 +73,76 @@ const styles = () => (
 			}
 		}
 		body {
-			font-family: Helvetica,sans-serif;
+			font-family: Helvetica, sans-serif;
 		}
 	`}</style>
-)
+);
 
-const feed = ({id, points, url, title, user, comments_count}) => (
+const Feed = ({ id, points, url, title, user, comments_count }) => (
 	<li key={id}>
 		<span className="points">{points}</span>
 		<span>
-			<div><a href={url} target="_black">{title}</a></div>
 			<div>
-				<span><Link href={`/?user=${user}`}><a>{user}</a></Link></span>
-				<span> | <Link href={`/?item=${id}`}><a>{comments_count || 0} comments</a></Link></span>
+				<a href={url} target="_black">
+					{title}
+				</a>
+			</div>
+			<div>
+				<span>
+					<Link href={`/?user=${user}`}>
+						<a>{user}</a>
+					</Link>
+				</span>
+				<span>
+					{' '}
+					|{' '}
+					<Link href={`/?item=${id}`}>
+						<a>{comments_count || 0} comments</a>
+					</Link>
+				</span>
 			</div>
 		</span>
 	</li>
-)
+);
 
-const more = query => {
+const More = query => {
 	const max = {
 		news: 10,
 		newest: 10,
 		ask: 2,
 		show: 2,
 		jobs: 1
-	}
-	
-	query = Object.entries(query)
-	query = query.length > 0 ? query[0][0].split('/') : ['news', 1]
-	
-	const feed = query[0]
-	const page = Number.parseInt(query[1])
+	};
+
+	query = Object.entries(query);
+	query = query.length > 0 ? query[0][0].split('/') : ['news', 1];
+
+	const feed = query[0];
+	const page = Number.parseInt(query[1]);
 
 	return (
 		<div>
-			{page < max[feed] ? <Link href={`/?${feed}/${page + 1}`}><a>More...</a></Link> : ''}
+			{page < max[feed] ? (
+				<Link href={`/?${feed}/${page + 1}`}>
+					<a>More...</a>
+				</Link>
+			) : (
+				''
+			)}
 		</div>
-	)
-}
+	);
+};
 
-const feeds = (src, url) => (
+const Feeds = (src, url) => (
 	<div>
 		<div>
-			<ul>{src.map(f => feed(f))}</ul>
+			<ul>{src.map(f => Feed(f))}</ul>
 		</div>
-		<div>
-			{more(url)}
-		</div>
+		<div>{More(url)}</div>
 	</div>
-)
+);
 
-const user = user => (
+const User = user => (
 	<div className="container">
 		<h1>{user.id}</h1>
 		<div>Created: {user.created}</div>
@@ -126,84 +150,112 @@ const user = user => (
 		<div>Delay: {user.delay}</div>
 		<div>About: {user.about}</div>
 	</div>
-)
+);
 
-const comment = ({id, content, user, time_ago}) => (
+const Comment = ({ id, content, user, time_ago }) => (
 	<div key={id} className="commment">
-		<div dangerouslySetInnerHTML={{__html: content}}></div>
+		<div dangerouslySetInnerHTML={{ __html: content }} />
 		<div>
-			<Link href={`/?user=${user}`}><a>{user}</a></Link> | {time_ago}
+			<Link href={`/?user=${user}`}>
+				<a>{user}</a>
+			</Link>{' '}
+			| {time_ago}
 		</div>
 	</div>
-)
+);
 
-const comments = item => (
+const Comments = item => (
 	<div className="container">
 		<div>
-			<h2><a href={item.url} target="_black">{item.title}</a></h2>
+			<h2>
+				<a href={item.url} target="_black">
+					{item.title}
+				</a>
+			</h2>
 			<div>
-				<Link href={`/?user=${item.user}`}><a>{item.user}</a></Link> | {item.points} points
+				<Link href={`/?user=${item.user}`}>
+					<a>{item.user}</a>
+				</Link>{' '}
+				| {item.points} points
 			</div>
 		</div>
-		<div>{item.comments.map(c => comment(c))}</div>
+		<div>{item.comments.map(c => Comment(c))}</div>
 	</div>
-)
+);
 
-const nav = () => (
+const Navigation = () => (
 	<header>
 		<nav>
-			<Link href='/'><a>News</a></Link>
-			<Link href='/?newest/1'><a>Newest</a></Link>
-			<Link href='/?ask/1'><a>Ask</a></Link>
-			<Link href='/?show/1'><a>Show</a></Link>
-			<Link href='/?jobs/1'><a>Jobs</a></Link>
+			<Link href="/">
+				<a>News</a>
+			</Link>
+			<Link href="/?newest/1">
+				<a>Newest</a>
+			</Link>
+			<Link href="/?ask/1">
+				<a>Ask</a>
+			</Link>
+			<Link href="/?show/1">
+				<a>Show</a>
+			</Link>
+			<Link href="/?jobs/1">
+				<a>Jobs</a>
+			</Link>
 		</nav>
 	</header>
-)
+);
 
-export default class HNPWA extends React.PureComponent {
-	static routes (query) {
-		query = Object.entries(query)[0]
-		const subpath = (query ? `${query[0]}` : 'news/1')
-									+ (query && query[1] !== '' ? `/${query[1]}` : '')
-		return `https://api.hnpwa.com/v0/${subpath}.json`
+class HNPWApp extends React.PureComponent {
+	static routes(query) {
+		query = Object.entries(query)[0];
+		const subpath =
+			(query ? `${query[0]}` : 'news/1') +
+			(query && query[1] !== '' ? `/${query[1]}` : '');
+		return `https://api.hnpwa.com/v0/${subpath}.json`;
 	}
 
-	static async getInitialProps ({query, pathname}) {
-		const res = await fetch(HNPWA.routes(query))
-		return {data: await res.json()}
+	static async getInitialProps({ query, pathname }) {
+		const res = await fetch(HNPWApp.routes(query));
+		return { data: await res.json() };
 	}
 
-	componentDidMount () {
+	componentDidMount() {
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/static/workbox/sw.js', {scope: '../../'})
+			navigator.serviceWorker
+				.register('/static/workbox/sw.js', { scope: '../../' })
 				.then(reg => log('service worker registration succeed', reg.scope))
-				.catch(err => log('service worker registration failed', err.message))
+				.catch(err => log('service worker registration failed', err.message));
 		}
 	}
 
-	render () {
-		const body = ({data, url}) => {
-			if (url.query['user']) {
-				return user(data)
-			} else if (url.query['item']) {
-				return comments(data)
-			} else {
-				return feeds(data, url.query)
-			}
+	renderContent({ data, router }) {
+		if (router.query['user']) {
+			return User(data);
+		} else if (router.query['item']) {
+			return Comments(data);
+		} else {
+			return Feeds(data, router.query);
 		}
+	}
 
+	render() {
 		return (
 			<div>
 				<Head>
-					<title>NEXT-PWA</title>
-					<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+					<title>NEXT-HNPWA</title>
+					<meta
+						name="viewport"
+						content="initial-scale=1.0, width=device-width"
+					/>
+					<link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
 					<link rel="manifest" href="/static/manifest/manifest.json" />
 				</Head>
-				{nav()}
-				{body(this.props)}
-				{styles()}
+				{Navigation()}
+				{this.renderContent(this.props)}
+				{Styles()}
 			</div>
-		)
+		);
 	}
 }
+
+export default withRouter(HNPWApp);

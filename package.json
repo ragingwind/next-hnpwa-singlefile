@@ -1,10 +1,10 @@
 {
-  "name": "next-singlepage-hnpwa",
+  "name": "next-hnpwa-singlepage",
   "version": "0.0.0",
-  "description": "Single-Page HNPWA with Next.js",
+  "description": "HNPWA with Next.js in Single-Page",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ragingwind/next-singlepage-hnpwa.git"
+    "url": "git+https://github.com/ragingwind/next-hnpwa-singlepage.git"
   },
   "license": "MIT",
   "author": {
@@ -19,7 +19,6 @@
   "dependencies": {
     "isomorphic-unfetch": "^3.0.0",
     "next": "^8.1.0",
-    "next-workbox": "^1.4.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   }
