@@ -1,10 +1,10 @@
 {
-  "name": "next-hnpwa-singlepage",
+  "name": "next-hnpwa-singlefile",
   "version": "0.0.0",
-  "description": "HNPWA with Next.js in Single-Page",
+  "description": "> HNPWA, Progressive Webapp, built with Next.js in single file.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ragingwind/next-hnpwa-singlepage.git"
+    "url": "git+https://github.com/ragingwind/next-hnpwa-singlefile.git"
   },
   "license": "MIT",
   "author": {

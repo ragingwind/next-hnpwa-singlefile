@@ -1,17 +1,14 @@
-# next-pwa-app
+# next-hnpwa
 
-> Progressive Web Application with Next.js
+> HNPWA, Progressive Webapp, built with Next.js in single file.
 
-# How to use
+# Get started
 
 ```sh
-# setup
-npm install
-
-# run
-npm start
+yarn install
+yarn dev
 ```
 
 # License
 
-MIT @ [Jimmy Moon](https://ragingwind.me)
+MIT @ [Jimmy Moon](https://jimmymoon.dev)
