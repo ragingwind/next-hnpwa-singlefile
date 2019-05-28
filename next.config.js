@@ -1,3 +1,5 @@
-const withWorkbox = require('next-workbox')
-
-module.exports = withWorkbox({})
+module.exports = {
+	webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+		return config;
+	}
+};
