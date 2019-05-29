@@ -219,12 +219,9 @@ class HNPWApp extends React.PureComponent {
 		return { data: await res.json() };
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker
-				.register('/static/sw.js', { scope: '../../' })
-				.then(reg => log('service worker registration succeed', reg.scope))
-				.catch(err => log('service worker registration failed', err.message));
+			await navigator.serviceWorker.register('/static/sw.js', { scope: '../../' })
 		}
 	}
 
