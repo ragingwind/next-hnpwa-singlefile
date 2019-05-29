@@ -1,6 +1,6 @@
 {
   "name": "next-hnpwa-singlefile",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "> HNPWA, Progressive Webapp, built with Next.js in single file.",
   "repository": {
     "type": "git",
