@@ -2,7 +2,5 @@
 	"version": 2,
 	"name": "next-hnpwa-singlefile",
 	"routes": [{ "src": "/sw.js", "dest": "/static/sw.js" }],
-	"builds": [
-		{ "src": "next.config.js", "use": "@now/next" }
-	]
+	"builds": [{ "src": "next.config.js", "use": "@now/next" }]
 }
