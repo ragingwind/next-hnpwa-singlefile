@@ -15,7 +15,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next",
-    "start": "node server.js"
+    "now-build": "next build",
+    "start": "now dev"
   },
   "dependencies": {
     "isomorphic-unfetch": "^3.0.0",
