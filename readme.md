@@ -9,6 +9,12 @@ yarn install
 yarn dev
 ```
 
+# Deployment
+
+```sh
+now
+```
+
 # License
 
 MIT @ [Jimmy Moon](https://jimmymoon.dev)
